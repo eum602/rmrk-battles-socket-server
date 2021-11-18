@@ -1,0 +1,19 @@
+{
+  "name": "nft-server",
+  "version": "1.0.0",
+  "description": "Server for data related to nfts",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^8.7.1",
+    "socket.io": "^4.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
