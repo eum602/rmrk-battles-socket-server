@@ -22,12 +22,12 @@ io.on("connection", (socket) => {
   interval = setInterval(() => getApiAndEmit(socket), 10000);
 
   // handle the event sent with socket.emit()
-  socket.on("accountsRoom", (address) => {
-    console.log("message received from 'accountsRoom'", address);
+  socket.on("generalNftsRoom", (nftId) => {
+    console.log("message received from 'generalNftsRoom'", nftId);
     //verify the kind of bird this nft is
     //pull kind of bird
     let kindOfBird = "Founder" //must be dymamically obtained
-    socket.emit(kindOfBird, address);
+    socket.emit(kindOfBird, nftId);
   });
 
   socket.on("disconnect", () => {
@@ -42,10 +42,10 @@ io.on("connection", (socket) => {
   });
 
   //advises an initial challenger that a challenged person has accepted or not
-  socket.on("acceptChallenge", (hasAccepted,challenged, challenger) => {
+  socket.on("acceptChallengeRoom", (hasAccepted,challenged, challenger) => {
     if(challenged == null || challenged =='') return
     if(challenger == null || challenger =='') return
-    socket.emit(challenger+"accept", challenged, hasAccepted)
+    socket.emit(challenger+"acceptRoom", challenged, hasAccepted)
   });
 
   //the relayer for all the messages which goes through a live play
@@ -55,14 +55,12 @@ io.on("connection", (socket) => {
     if(receiver == null || receiver =='') return
     socket.emit(receiver+"matchMessage", message, sender)
   });
-
-
 });
 
 const getApiAndEmit = socket => {
   const response = new Date();
   // Emitting a new message. Will be consumed by the client
-  socket.emit("GeneralRoom", response);
+  //socket.emit("GeneralRoom", response);
 };
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
