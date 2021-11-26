@@ -1,12 +1,35 @@
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
+var cors = require('cors')
 
 const port = process.env.PORT || 4001;
 const index = require("./routes/index");
 
 const app = express();
 app.use(index);
+app.use(cors({
+  origin: '*'
+}));
+
+app.use(function (req, res, next) {
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // Pass to next layer of middleware
+  next();
+});
 
 const server = http.createServer(app);
 
@@ -27,7 +50,7 @@ io.on("connection", (socket) => {
     //verify the kind of bird this nft is
     //pull kind of bird
     let kindOfBird = "Founder" //must be dymamically obtained
-    socket.emit(kindOfBird, nftId);
+    socket.broadcast.emit(kindOfBird, nftId);
   });
 
   socket.on("disconnect", () => {
@@ -36,16 +59,17 @@ io.on("connection", (socket) => {
   });
 
   socket.on("challengeRoom", (sender, challenged) => {
-      if(sender == null || sender =='') return
-      if(challenged == null || challenged =='') return
-      socket.emit(challenged, sender)
+    console.log("ChallengeRoom: sender: ",sender, ", challenged: ", challenged )
+    if(sender == null || sender =='') return
+    if(challenged == null || challenged =='') return
+    socket.broadcast.emit(challenged, sender)
   });
 
-  //advises an initial challenger that a challenged person has accepted or not
+  //advises an initial challenger that a challenged nft has accepted or not
   socket.on("acceptChallengeRoom", (hasAccepted,challenged, challenger) => {
     if(challenged == null || challenged =='') return
     if(challenger == null || challenger =='') return
-    socket.emit(challenger+"acceptRoom", challenged, hasAccepted)
+    socket.broadcast.emit(challenger+"acceptRoom", challenged, hasAccepted)
   });
 
   //the relayer for all the messages which goes through a live play
@@ -53,7 +77,7 @@ io.on("connection", (socket) => {
     if(message == null || message =='') return //validate message, it is only a string in this stage
     if(sender == null || sender =='') return
     if(receiver == null || receiver =='') return
-    socket.emit(receiver+"matchMessage", message, sender)
+    socket.broadcast.emit(receiver+"matchMessage", message, sender)
   });
 });
 
