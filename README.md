@@ -1,9 +1,15 @@
 # Diagrams
 
+## Build with docker
+
+```shell
+docker build -t nft-battles-server:v01 .
+```
+
 ## Run with docker
 
 ```shell
-docker run -p 4001:4001 nft-server:latest
+docker run -p 4001:4001 nft-battles-server:v01
 ```
 
 ## Client Connections
